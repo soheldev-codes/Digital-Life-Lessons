@@ -7,3 +7,122 @@ html,
 body {
   min-height: 100%;
 }
+
+:root {
+  --primary: #6c47ff;
+  --secondary: #f1f1f5;
+  --accent: #f59e0b;
+
+  --background: #fafaff;
+  --foreground: #1b1b24;
+
+  --card: #ffffff;
+  --muted: #737373;
+  --border: #e5e7eb;
+
+  --grad-from: #6c47ff;
+  --grad-via: #a855f7;
+  --grad-to: #f59e0b;
+
+  --hero-from: #ede9fe;
+  --hero-to: #fef3c7;
+}
+
+.dark {
+  --primary: #818cf8;
+  --secondary: #1f1f2a;
+  --accent: #fbbf24;
+
+  --background: #111827;
+  --foreground: #f9fafb;
+
+  --card: #1f2937;
+  --muted: #9ca3af;
+  --border: #374151;
+
+  --grad-from: #818cf8;
+  --grad-via: #c084fc;
+  --grad-to: #fbbf24;
+
+  --hero-from: #1e1b4b;
+  --hero-to: #1c1917;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.gradient-hero {
+  @apply bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950;
+}
+
+.gradient-brand-text {
+  @apply bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent;
+}
+
+.gradient-button {
+  @apply bg-gradient-to-r from-indigo-600 to-purple-600;
+}
+
+.gradient-primary-soft {
+  @apply bg-indigo-100 dark:bg-indigo-950;
+}
+
+@layer utilities {
+  .gradient-brand {
+    background: linear-gradient(
+      135deg,
+      var(--grad-from) 0%,
+      var(--grad-via) 50%,
+      var(--grad-to) 100%
+    );
+  }
+  .gradient-brand-text {
+    background: linear-gradient(
+      135deg,
+      var(--grad-from) 0%,
+      var(--grad-via) 50%,
+      var(--grad-to) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-hero {
+    background: linear-gradient(
+      135deg,
+      var(--grad-hero-from) 0%,
+      var(--grad-hero-to) 100%
+    );
+  }
+  .gradient-card {
+    background: linear-gradient(
+      145deg,
+      hsl(var(--card)) 0%,
+      hsl(var(--muted) / 0.5) 100%
+    );
+  }
+  .gradient-primary-soft {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.12) 0%,
+      hsl(var(--accent) / 0.08) 100%
+    );
+  }
+  .gradient-button {
+    background: linear-gradient(
+      135deg,
+      var(--grad-from) 0%,
+      var(--grad-via) 100%
+    );
+    color: white;
+  }
+  .gradient-button:hover {
+    background: linear-gradient(
+      135deg,
+      var(--grad-via) 0%,
+      var(--grad-from) 100%
+    );
+  }
+}
