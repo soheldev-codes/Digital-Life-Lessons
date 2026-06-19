@@ -136,12 +136,12 @@ export default function AddLessonPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
+    <div className="max-w-4xl mx-auto py-4 px-4">
       <h1 className="text-4xl font-bold mb-2">Add New Lesson</h1>
 
       <p className="text-gray-500 mb-8">Share your wisdom with the community</p>
 
-      <div className="bg-white rounded-2xl shadow p-6 md:p-8 border">
+      <div className="bg-white rounded-2xl shadow p-6 md:p-8 border border-gray-200">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* title */}
           <div>
@@ -151,7 +151,7 @@ export default function AddLessonPage() {
               value={formData.title}
               onChange={handleChange}
               placeholder="What did you learn?"
-              className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
@@ -160,12 +160,12 @@ export default function AddLessonPage() {
             <label className="font-medium block mb-2">Full Description *</label>
 
             <textarea
-              rows={8}
+              rows={4}
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Share the full story..."
-              className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
@@ -178,7 +178,7 @@ export default function AddLessonPage() {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3"
               >
                 <option value="">Select category</option>
 
@@ -195,7 +195,7 @@ export default function AddLessonPage() {
                 name="emotionalTone"
                 value={formData.emotionalTone}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3"
               >
                 <option value="">Select tone</option>
 
@@ -215,7 +215,7 @@ export default function AddLessonPage() {
                 name="visibility"
                 value={formData.visibility}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3"
               >
                 <option>Public</option>
                 <option>Private</option>
@@ -230,7 +230,7 @@ export default function AddLessonPage() {
                 name="accessLevel"
                 value={formData.accessLevel}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3 disabled:bg-gray-100"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 disabled:bg-gray-100"
               >
                 <option>Free</option>
                 <option>Premium</option>
@@ -248,7 +248,7 @@ export default function AddLessonPage() {
           <div>
             <label className="font-medium block mb-3">Image (Optional)</label>
 
-            <label className="border-2 border-dashed rounded-2xl h-36 flex flex-col justify-center items-center cursor-pointer">
+            <label className="border border-gray-200  rounded-2xl h-36 flex flex-col justify-center items-center cursor-pointer">
               <FiUpload size={24} />
 
               <p className="mt-2 text-sm">
@@ -274,7 +274,7 @@ export default function AddLessonPage() {
 
           <button
             disabled={mutation.isPending}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-xl font-semibold flex justify-center items-center gap-2"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-xl font-semibold flex justify-center items-center gap-2 cursor-pointer"
           >
             <FiPlus />
 

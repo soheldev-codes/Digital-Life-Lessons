@@ -7,6 +7,7 @@ import { useSession } from "@/lib/auth-client";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { FiMail, FiUpload, FiSave, FiBookOpen, FiHeart } from "react-icons/fi";
 import { FaCrown } from "react-icons/fa";
+import Image from "next/image";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
@@ -98,13 +99,15 @@ export default function ProfilePage() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Left */}
-        <div className="bg-white rounded-2xl shadow border p-6">
+        <div className="bg-white rounded-2xl shadow border border-gray-200 p-6">
           <div className="text-center">
             <div className="relative inline-block">
-              <img
+              <Image
+                height={112}
+                width={112}
                 src={photo || "/avatar.png"}
                 alt=""
-                className="w-28 h-28 rounded-full object-cover border-4 border-purple-200"
+                className="w-28 h-28 rounded-full object-cover border  border-purple-200"
               />
 
               <label className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full cursor-pointer">
@@ -158,14 +161,14 @@ export default function ProfilePage() {
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border rounded-xl px-4 py-3"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3"
               placeholder="Name"
             />
 
             <input
               value={photo}
               onChange={(e) => setPhoto(e.target.value)}
-              className="w-full border rounded-xl px-4 py-3"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3"
               placeholder="Photo URL"
             />
 
@@ -190,10 +193,13 @@ export default function ProfilePage() {
               {lessons.map((lesson) => (
                 <div
                   key={lesson._id}
-                  className="bg-white border rounded-2xl shadow p-4"
+                  className="bg-white border border-gray-200 rounded-2xl shadow p-4"
                 >
                   {lesson.image && (
-                    <img
+                    <Image
+                      height={160}
+                      width={300}
+                      alt={lesson.title}
                       src={lesson.image}
                       className="w-full h-40 object-cover rounded-xl mb-3"
                     />
@@ -220,7 +226,7 @@ export default function ProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border p-10 text-center text-gray-500">
+            <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center text-gray-500">
               No public lessons yet
             </div>
           )}
