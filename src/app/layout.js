@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/Components/Shared/Navbar";
 import Footer from "@/Components/Shared/Footer";
 import { Toaster } from "react-hot-toast";
+import LayoutWrapper from "@/Components/Shared/LayoutWraper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,10 +28,12 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="bg-white text-black dark:bg-gray-950 dark:text-white transition-colors duration-300">
-        <Navbar />
-        <main>{children}</main>
+        {/* <Navbar /> */}
+        <main>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </main>
         <Toaster position="top-right" />
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );
