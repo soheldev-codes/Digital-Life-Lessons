@@ -29,7 +29,12 @@ export default function MyLessonsPage() {
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons/user/${user.email}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/my-lessons/user/${user.email}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`, // টোকেনটি অবশ্যই পাঠাতে হবে
+          },
+        },
       );
       return res.data;
     },
@@ -39,13 +44,13 @@ export default function MyLessonsPage() {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }) => {
       const res = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/${id}`,
         data,
       );
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["my-lessons"]);
+      queryClient.invalidateQueries({ queryKey: ["my-lessons", user?.email] });
       toast.success("Lesson updated");
     },
     onError: () => toast.error("Update failed"),
@@ -55,12 +60,12 @@ export default function MyLessonsPage() {
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       const res = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/${id}`,
       );
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["my-lessons"]);
+      queryClient.invalidateQueries({ queryKey: ["my-lessons", user?.email] });
       toast.success("Lesson deleted");
     },
     onError: () => toast.error("Delete failed"),
@@ -125,9 +130,9 @@ export default function MyLessonsPage() {
 
       {/* table */}
       {!isLoading && lessons.length > 0 && (
-        <div className="overflow-x-auto bg-white rounded-2xl border">
+        <div className="overflow-x-auto bg-white rounded-2xl border border-gray-200">
           <table className="w-full min-w-[1100px]">
-            <thead className="border-b bg-gray-50">
+            <thead className="border-b bg-gray-50 border-gray-200">
               <tr className="text-left">
                 <th className="p-4">Title</th>
                 <th className="p-4">Category</th>
@@ -140,7 +145,7 @@ export default function MyLessonsPage() {
 
             <tbody>
               {lessons.map((lesson) => (
-                <tr key={lesson._id} className="border-b">
+                <tr key={lesson._id} className="border-b border-gray-200">
                   <td className="p-4 font-medium max-w-[250px] truncate">
                     {lesson.title}
                   </td>
@@ -154,7 +159,7 @@ export default function MyLessonsPage() {
                       onChange={(e) =>
                         handleVisibility(lesson._id, e.target.value)
                       }
-                      className="border rounded-lg px-3 py-2"
+                      className="border border-gray-200 rounded-lg px-3 py-2"
                     >
                       <option>Public</option>
                       <option>Private</option>
@@ -167,7 +172,7 @@ export default function MyLessonsPage() {
                       disabled={!isPremium}
                       value={lesson.accessLevel || "Free"}
                       onChange={(e) => handleAccess(lesson._id, e.target.value)}
-                      className="border rounded-lg px-3 py-2 disabled:bg-gray-100"
+                      className="border border-gray-200 rounded-lg px-3 py-2 disabled:bg-gray-100"
                     >
                       <option>Free</option>
                       <option>Premium</option>

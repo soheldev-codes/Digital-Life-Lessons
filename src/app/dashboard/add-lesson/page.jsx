@@ -19,13 +19,14 @@ const tones = ["Motivational", "Sad", "Realization", "Gratitude"];
 
 export default function AddLessonPage() {
   const { data: session } = useSession();
-  console.log(session);
 
   const user = session?.user;
 
   const isPremium = user?.isPremium || user?.role === "admin";
 
   const [loadingImage, setLoadingImage] = useState(false);
+
+  const token = session?.accessToken;
 
   const [formData, setFormData] = useState({
     title: "",
@@ -40,8 +41,13 @@ export default function AddLessonPage() {
   const mutation = useMutation({
     mutationFn: async (lessonData) => {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/add-lesson`,
         lessonData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       return res.data;
     },
