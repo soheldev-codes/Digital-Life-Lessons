@@ -40,7 +40,9 @@ export default function PublicLessonsPage() {
   const { data: lessons = [], isLoading } = useQuery({
     queryKey: ["public-lessons"],
     queryFn: async () => {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/lessons`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons`,
+      );
 
       return res.data.filter((lesson) => lesson.visibility === "Public");
     },
@@ -92,7 +94,7 @@ export default function PublicLessonsPage() {
             <FaSearch className="absolute top-4 left-3 text-gray-400" />
 
             <input
-              className="w-full border rounded-xl py-3 pl-10 pr-4"
+              className="w-full border border-gray-200 rounded-xl py-3 pl-10 pr-4"
               placeholder="Search lessons..."
               value={search}
               onChange={(e) => {
@@ -103,7 +105,7 @@ export default function PublicLessonsPage() {
           </div>
 
           <select
-            className="border rounded-xl px-4"
+            className="border border-gray-200 rounded-xl px-4"
             value={category}
             onChange={(e) => {
               setCategory(e.target.value);
@@ -116,7 +118,7 @@ export default function PublicLessonsPage() {
           </select>
 
           <select
-            className="border rounded-xl px-4"
+            className="border border-gray-200 rounded-xl px-4"
             value={tone}
             onChange={(e) => {
               setTone(e.target.value);
@@ -150,7 +152,7 @@ export default function PublicLessonsPage() {
         <div className="flex justify-center gap-3 mt-10">
           <button
             disabled={page === 1}
-            className="px-4 py-2 border rounded-xl disabled:opacity-40"
+            className="px-4 py-2 border border-gray-200 rounded-xl disabled:opacity-40"
             onClick={() => setPage(page - 1)}
           >
             Prev
@@ -162,7 +164,7 @@ export default function PublicLessonsPage() {
 
           <button
             disabled={page === totalPages}
-            className="px-4 py-2 border rounded-xl disabled:opacity-40"
+            className="px-4 py-2 border border-gray-200 rounded-xl disabled:opacity-40"
             onClick={() => setPage(page + 1)}
           >
             Next
