@@ -33,6 +33,13 @@ export default function Navbar() {
     { label: "Favorites", href: "/dashboard/my-favorites" },
   ];
 
+  const adminLinks = [
+    { label: "Dashboard", href: "/dashboard/admin" },
+    { label: "Add Lesson", href: "/dashboard/admin/add-lesson" },
+    { label: "My Lessons", href: "/dashboard/admin/my-lessons" },
+    { label: "Favorites", href: "/dashboard/admin/my-favorites" },
+  ];
+
   const handleLogout = async () => {
     await authClient.signOut({
       fetchOptions: {
@@ -71,7 +78,27 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {isLoggedIn &&
+            {isAdmin
+              ? adminLinks.map((link) => (
+                  <Link
+                    key={link?.href}
+                    href={link?.href}
+                    className="font-medium hover:text-purple-600 transition"
+                  >
+                    {link?.label}
+                  </Link>
+                ))
+              : userLinks.map((link) => (
+                  <Link
+                    key={link?.href}
+                    href={link?.href}
+                    className="font-medium hover:text-purple-600 transition"
+                  >
+                    {link?.label}
+                  </Link>
+                ))}
+
+            {/* {isLoggedIn &&
               userLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -80,16 +107,16 @@ export default function Navbar() {
                 >
                   {link.label}
                 </Link>
-              ))}
+              ))} */}
 
-            {isAdmin && (
+            {/* {isAdmin && (
               <Link
                 href="/dashboard/admin"
                 className="font-semibold text-yellow-500"
               >
                 Admin Panel
               </Link>
-            )}
+            )} */}
           </nav>
 
           {/* Right */}
