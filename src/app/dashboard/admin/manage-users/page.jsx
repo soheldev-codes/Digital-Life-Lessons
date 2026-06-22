@@ -12,7 +12,9 @@ export default function ManageUsersPage() {
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["all-users"],
     queryFn: async () => {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users`,
+      );
       return res.data;
     },
   });
@@ -21,7 +23,7 @@ export default function ManageUsersPage() {
   const roleMutation = useMutation({
     mutationFn: async ({ id, role }) => {
       const res = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/${id}/role`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users/${id}/role`,
         { role },
       );
 
@@ -51,10 +53,10 @@ export default function ManageUsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow border overflow-hidden">
+      <div className="bg-white rounded-2xl shadow border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[850px]">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr className="text-left">
                 <th className="p-4">User</th>
                 <th className="p-4">Email</th>
@@ -79,7 +81,7 @@ export default function ManageUsersPage() {
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user._id} className="border-b">
+                  <tr key={user._id} className="border-b border-gray-200">
                     {/* user */}
                     <td className="p-4">
                       <div className="flex items-center gap-3">
@@ -131,7 +133,7 @@ export default function ManageUsersPage() {
                             role: e.target.value,
                           })
                         }
-                        className="border rounded-lg px-3 py-2"
+                        className="border border-gray-300 rounded-lg px-3 py-2"
                       >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
