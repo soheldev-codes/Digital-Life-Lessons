@@ -14,7 +14,9 @@ export default function AdminHome() {
   const { data: users = [], isLoading: loadingUsers } = useQuery({
     queryKey: ["all-users"],
     queryFn: async () => {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users`,
+      );
       return res.data;
     },
   });
@@ -22,7 +24,9 @@ export default function AdminHome() {
   const { data: lessons = [], isLoading: loadingLessons } = useQuery({
     queryKey: ["all-lessons"],
     queryFn: async () => {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/lessons`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/all-lessons`,
+      );
       return res.data;
     },
   });
@@ -30,7 +34,9 @@ export default function AdminHome() {
   const { data: reports = [] } = useQuery({
     queryKey: ["all-reports"],
     queryFn: async () => {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/reports`,
+      );
       return res.data;
     },
   });
@@ -94,7 +100,7 @@ export default function AdminHome() {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-2xl border shadow-sm p-5"
+            className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5"
           >
             <div className="flex items-center gap-4">
               <div
@@ -115,7 +121,7 @@ export default function AdminHome() {
       </div>
 
       {/* recent lessons */}
-      <div className="bg-white rounded-2xl border shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
         <h2 className="text-xl font-semibold mb-5">Recent Lessons</h2>
 
         {lessons.length === 0 ? (
@@ -125,7 +131,7 @@ export default function AdminHome() {
             {lessons.slice(0, 5).map((lesson) => (
               <div
                 key={lesson._id}
-                className="flex justify-between items-center border-b pb-3"
+                className="flex justify-between items-center border-b border-gray-200 pb-3"
               >
                 <div>
                   <h3 className="font-medium">{lesson.title}</h3>
