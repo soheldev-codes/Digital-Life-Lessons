@@ -22,11 +22,13 @@ export default function DashboardPage() {
     enabled: !!user,
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/${user.email}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard/${user.email}`,
       );
       return res.data;
     },
   });
+
+  console.log(dashboardData);
 
   const stats = [
     {

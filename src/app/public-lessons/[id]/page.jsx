@@ -1,199 +1,348 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+
 import {
-  FaArrowLeft,
   FaHeart,
+  FaRegHeart,
   FaBookmark,
   FaFlag,
-  FaRegComment,
+  FaArrowLeft,
   FaPaperPlane,
-  FaCalendarAlt,
+  FaRegComment,
   FaEye,
 } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { useSession } from "@/lib/auth-client";
 
 export default function LessonDetails() {
   const { id } = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const [lesson, setLesson] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([
-    {
-      name: "Sohel Rana",
-      text: "hello",
-      createdAt: new Date(),
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const [commentText, setCommentText] = useState("");
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reason, setReason] = useState("");
+  const [details, setDetails] = useState("");
+
+  // lesson
+  const { data: lesson, isLoading } = useQuery({
+    queryKey: ["lesson", id],
+    queryFn: async () => {
+      const res = await axios.get(`http://localhost:5000/lessons/${id}`);
+      return res.data;
     },
-  ]);
+  });
 
-  useEffect(() => {
-    async function loadLesson() {
-      try {
-        const res = await fetch(`http://localhost:5000/lessons/${id}`);
-        const data = await res.json();
-        setLesson(data);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // comments
+  const { data: comments = [] } = useQuery({
+    queryKey: ["comments", id],
+    queryFn: async () => {
+      const res = await axios.get(`http://localhost:5000/comments/${id}`);
+      return res.data;
+    },
+  });
 
-    loadLesson();
-  }, [id]);
+  // related lessons
+  const { data: related = [] } = useQuery({
+    queryKey: ["related", lesson?.category],
+    enabled: !!lesson,
+    queryFn: async () => {
+      const res = await axios.get(
+        `http://localhost:5000/lessons/related/${lesson.category}?exclude=${lesson._id}`,
+      );
+      return res.data;
+    },
+  });
 
-  const handleComment = () => {
-    if (!comment.trim()) return;
+  // comment mutation
+  const commentMutation = useMutation({
+    mutationFn: async () => {
+      await axios.post("http://localhost:5000/comments", {
+        lesson_id: id,
+        text: commentText,
+        user_name: user.name,
+        user_photo: user.image,
+        user_email: user.email,
+      });
+    },
+    onSuccess: () => {
+      setCommentText("");
+      queryClient.invalidateQueries(["comments", id]);
+    },
+  });
 
-    setComments([
-      ...comments,
-      {
-        name: "Current User",
-        text: comment,
-        createdAt: new Date(),
-      },
-    ]);
+  // like mutation
+  const likeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch(
+        `http://localhost:5000/lessons/like/${id}`,
+        {
+          email: user?.email, // user চেক করে নিন
+        },
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      // query key সঠিকভাবে পাস করুন
+      queryClient.invalidateQueries({ queryKey: ["lesson", id] });
+    },
+  });
 
-    setComment("");
-  };
+  // favorite mutation
+  // favorite mutation
+  const favoriteMutation = useMutation({
+    mutationFn: async () => {
+      // এখানে POST রিকোয়েস্ট পাঠান
+      const res = await axios.post(
+        `http://localhost:5000/lessons/favorite/${id}`,
+        {
+          email: user?.email,
+        },
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      // ডেটা আপডেট হওয়ার পর লেসনটি রিফ্রেচ করুন যাতে savesCount আপডেট হয়
+      queryClient.invalidateQueries(["lesson", id]);
+    },
+  });
 
-  if (loading) {
-    return <div className="py-20 text-center">Loading...</div>;
+  // report mutation
+  // const reportMutation = useMutation({
+  //   mutationFn: async () => {
+  //     await axios.post("http://localhost:5000/reports", {
+  //       lesson_id: id,
+  //       lesson_title: lesson.title,
+  //       reporter_email: user.email,
+  //       reporter_name: user.name,
+  //       reason,
+  //       details,
+  //     });
+  //   },
+  //   onSuccess: () => {
+  //     setReportOpen(false);
+  //     setReason("");
+  //     setDetails("");
+  //     alert("Report submitted");
+  //   },
+  // });
+
+  const reportMutation = useMutation({
+    mutationFn: async () => {
+      return await axios.post("http://localhost:5000/reports", {
+        lesson_id: id,
+        lesson_title: lesson.title,
+        reporter_email: user.email,
+        reporter_name: user.name,
+        reason,
+        details,
+      });
+    },
+    onSuccess: () => {
+      setReportOpen(false);
+      setReason("");
+      setDetails("");
+      toast.success("Report submitted successfully!");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Something went wrong, please try again.");
+    },
+  });
+
+  if (isLoading) {
+    return <div className="text-center py-20">Loading...</div>;
   }
 
   if (!lesson) {
-    return <div className="py-20 text-center">Lesson Not Found</div>;
+    return <div>Lesson not found</div>;
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
-      {/* Back */}
+    <div className="max-w-5xl mx-auto px-4 py-10">
+      {/* back */}
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-gray-500 mb-6"
+        className="flex items-center gap-2 mb-6"
       >
         <FaArrowLeft />
         Back
       </button>
 
-      {/* badges */}
-      <div className="flex gap-3 mb-5 flex-wrap">
-        <span className="px-3 py-1 rounded-full bg-gray-100 text-sm">
+      {/* category */}
+      <div className="flex gap-2 mb-4">
+        <span className="px-3 py-1 bg-gray-200 rounded-full text-sm">
           {lesson.category}
         </span>
-
-        <span className="px-3 py-1 rounded-full bg-gray-100 text-sm">
+        <span className="px-3 py-1 bg-gray-200 rounded-full text-sm">
           {lesson.emotionalTone}
         </span>
       </div>
 
       {/* title */}
-      <h1 className="text-4xl font-bold mb-5">{lesson.title}</h1>
+      <h1 className="text-4xl font-bold mb-4">{lesson.title}</h1>
 
       {/* meta */}
-      <div className="flex gap-5 flex-wrap text-gray-500 mb-8">
-        <span className="flex items-center gap-2">
-          <FaCalendarAlt />
-          {new Date(lesson.createdAt).toDateString()}
-        </span>
-
-        <span className="flex items-center gap-2">
+      <div className="flex gap-4 text-gray-500 mb-6">
+        <span>{new Date(lesson.createdAt).toDateString()}</span>
+        <span className="flex items-center gap-1">
           <FaEye />
-          {lesson.reactionCount}
+          {lesson.views || 904}
         </span>
       </div>
 
       {/* image */}
-      <img
-        src={lesson.image}
-        alt=""
-        className="w-full rounded-2xl mb-8 h-[450px] object-cover"
-      />
+      <img src={lesson.image} className="rounded-2xl w-full mb-8" alt="" />
 
       {/* description */}
-      <p className="text-lg leading-9 text-gray-700 whitespace-pre-wrap mb-8">
+      <p className="leading-8 text-lg whitespace-pre-wrap mb-8">
         {lesson.description}
       </p>
 
       {/* actions */}
-      <div className="border-y py-5 flex gap-4 mb-8">
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg border">
+      <div className="border-y py-5 flex gap-3">
+        <button
+          onClick={() => likeMutation.mutate()}
+          className="border px-4 py-2 rounded-lg flex gap-2 items-center"
+        >
           <FaHeart />
           {lesson.reactionCount}
         </button>
 
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg border">
-          <FaBookmark />
-          {lesson.savesCount}
+        <button
+          onClick={() => favoriteMutation.mutate()}
+          className={`border px-4 py-2 rounded-lg flex gap-2 items-center ${
+            lesson.isFavorite ? "bg-red-50 text-red-500" : ""
+          }`}
+        >
+          {lesson.isFavorite ? <FaHeart /> : <FaBookmark />}
+          {lesson.savesCount || 0}
         </button>
 
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg border text-red-500">
+        <button
+          onClick={() => setReportOpen(true)}
+          className="border px-4 py-2 rounded-lg flex gap-2 items-center text-red-500"
+        >
           <FaFlag />
           Report
         </button>
       </div>
 
       {/* author */}
-      <div className="bg-gray-100 rounded-2xl p-6 flex items-center gap-4 mb-10">
+      <div className="bg-gray-100 rounded-2xl p-5 mt-8 flex gap-4 items-center">
         <img
           src={lesson.creatorPhoto}
-          className="w-14 h-14 rounded-full object-cover"
+          className="w-14 h-14 rounded-full"
+          alt=""
         />
-
         <div>
-          <h3 className="font-semibold text-lg">{lesson.creatorName}</h3>
+          <h3 className="font-bold">{lesson.creatorName}</h3>
           <p className="text-gray-500">Lesson Author</p>
         </div>
       </div>
 
       {/* comments */}
-      <div>
-        <h2 className="text-2xl font-bold flex items-center gap-2 mb-5">
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold flex gap-2 items-center mb-4">
           <FaRegComment />
           Comments ({comments.length})
         </h2>
 
-        {/* comment box */}
-        <div className="flex gap-3 mb-8">
-          <textarea
-            className="w-full border rounded-xl p-4"
+        <div className="flex gap-3 mb-6">
+          <input
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
             placeholder="Share your thoughts..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            className="border rounded-xl px-4 py-3 w-full"
           />
 
           <button
-            onClick={handleComment}
-            className="w-12 h-12 bg-violet-500 text-white rounded-lg flex justify-center items-center"
+            onClick={() => commentMutation.mutate()}
+            className="bg-purple-500 text-white p-4 rounded-xl"
           >
             <FaPaperPlane />
           </button>
         </div>
 
-        {/* comment list */}
         <div className="space-y-4">
-          {comments.map((item, index) => (
-            <div key={index} className="bg-gray-100 rounded-xl p-4">
+          {comments.map((comment) => (
+            <div key={comment._id} className="bg-gray-100 p-4 rounded-xl">
               <div className="flex gap-3 items-center mb-2">
-                <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm">
-                  {item.name[0]}
-                </div>
-
-                <div>
-                  <p className="font-semibold">{item.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(item.createdAt).toDateString()}
-                  </p>
-                </div>
+                <img
+                  src={comment.user_photo}
+                  className="w-8 h-8 rounded-full"
+                  alt=""
+                />
+                <span className="font-semibold">{comment.user_name}</span>
               </div>
 
-              <p className="text-gray-700">{item.text}</p>
+              <p>{comment.text}</p>
             </div>
           ))}
         </div>
       </div>
+
+      {/* related */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold mb-6">Related Lessons</h2>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {related.map((item) => (
+            <div key={item._id} className="border rounded-xl p-4">
+              <img src={item.image} className="rounded-lg mb-3" />
+              <h3 className="font-bold">{item.title}</h3>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* report modal */}
+      {reportOpen && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-xl w-[400px]">
+            <h2 className="text-2xl font-bold mb-4">Report Lesson</h2>
+
+            <select
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="border p-3 w-full mb-4 rounded-lg"
+            >
+              <option value="">Select reason</option>
+              <option>Inappropriate Content</option>
+              <option>Spam</option>
+              <option>Misleading Information</option>
+              <option>Harassment</option>
+              <option>Copyright Violation</option>
+              <option>Other</option>
+            </select>
+
+            <textarea
+              className="border rounded-lg p-3 w-full mb-4"
+              placeholder="Details"
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+            />
+
+            <div className="flex gap-3">
+              <button onClick={() => setReportOpen(false)}>Cancel</button>
+
+              <button
+                onClick={() => reportMutation.mutate()}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

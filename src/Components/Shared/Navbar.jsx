@@ -30,7 +30,7 @@ export default function Navbar() {
     { label: "Dashboard", href: "/dashboard" },
     { label: "Add Lesson", href: "/dashboard/add-lesson" },
     { label: "My Lessons", href: "/dashboard/my-lessons" },
-    { label: "Favorites", href: "/dashboard/my-favorites" },
+    { label: "Pricing", href: "/pricing" },
   ];
 
   const adminLinks = [
