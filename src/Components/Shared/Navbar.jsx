@@ -33,12 +33,7 @@ export default function Navbar() {
     { label: "Pricing", href: "/pricing" },
   ];
 
-  const adminLinks = [
-    { label: "Dashboard", href: "/dashboard/admin" },
-    { label: "Add Lesson", href: "/dashboard/admin/add-lesson" },
-    { label: "My Lessons", href: "/dashboard/admin/my-lessons" },
-    { label: "Favorites", href: "/dashboard/admin/my-favorites" },
-  ];
+  const adminLinks = [{ label: "Dashboard", href: "/dashboard/admin" }];
 
   const handleLogout = async () => {
     await authClient.signOut({
@@ -193,19 +188,34 @@ export default function Navbar() {
         {mobileOpen && (
           <div className="md:hidden pb-5 flex flex-col gap-4">
             {publicLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-medium hover:text-purple-600 transition"
+              >
                 {link.label}
               </Link>
             ))}
 
-            {isLoggedIn &&
-              userLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  {link.label}
-                </Link>
-              ))}
-
-            {isAdmin && <Link href="/dashboard/admin">Admin Panel</Link>}
+            {isAdmin
+              ? adminLinks.map((link) => (
+                  <Link
+                    key={link?.href}
+                    href={link?.href}
+                    className="font-medium hover:text-purple-600 transition"
+                  >
+                    {link?.label}
+                  </Link>
+                ))
+              : userLinks.map((link) => (
+                  <Link
+                    key={link?.href}
+                    href={link?.href}
+                    className="font-medium hover:text-purple-600 transition"
+                  >
+                    {link?.label}
+                  </Link>
+                ))}
 
             {!isLoggedIn ? (
               <>

@@ -17,30 +17,6 @@ export default function ProfilePage() {
   const [photo, setPhoto] = useState(user?.image || "");
   const [uploading, setUploading] = useState(false);
 
-  // user lessons
-  const { data: lessons = [], isLoading } = useQuery({
-    queryKey: ["my-lessons", user?.email],
-    enabled: !!user?.email,
-    queryFn: async () => {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons/public/${user.email}`,
-      );
-      return res.data;
-    },
-  });
-
-  // favorites
-  const { data: favorites = [] } = useQuery({
-    queryKey: ["favorites", user?.email],
-    enabled: !!user?.email,
-    queryFn: async () => {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/favorites/${user.email}`,
-      );
-      return res.data;
-    },
-  });
-
   // update profile
   const updateMutation = useMutation({
     mutationFn: async (payload) => {
@@ -143,19 +119,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* stats */}
-          <div className="grid grid-cols-2 gap-3 mt-6">
-            <div className="bg-gray-100 rounded-xl p-4 text-center">
-              <p className="text-2xl font-bold">{lessons.length}</p>
-              <p className="text-sm text-gray-500">Lessons</p>
-            </div>
-
-            <div className="bg-gray-100 rounded-xl p-4 text-center">
-              <p className="text-2xl font-bold">{favorites.length}</p>
-              <p className="text-sm text-gray-500">Favorites</p>
-            </div>
-          </div>
-
           {/* update */}
           <div className="space-y-4 mt-6">
             <input
@@ -174,62 +137,12 @@ export default function ProfilePage() {
 
             <button
               onClick={handleSave}
-              className="w-full bg-purple-600 text-white py-3 rounded-xl flex justify-center items-center gap-2"
+              className="w-full bg-purple-600 text-white py-3 rounded-xl flex justify-center items-center gap-2 cursor-pointer"
             >
               <FiSave />
               {updateMutation.isPending ? "Saving..." : "Update Profile"}
             </button>
           </div>
-        </div>
-
-        {/* Right */}
-        <div className="lg:col-span-2">
-          <h2 className="text-xl font-bold mb-4">My Public Lessons</h2>
-
-          {isLoading ? (
-            <p>Loading lessons...</p>
-          ) : lessons.length ? (
-            <div className="grid md:grid-cols-2 gap-4">
-              {lessons.map((lesson) => (
-                <div
-                  key={lesson._id}
-                  className="bg-white border border-gray-200 rounded-2xl shadow p-4"
-                >
-                  {lesson.image && (
-                    <Image
-                      height={160}
-                      width={300}
-                      alt={lesson.title}
-                      src={lesson.image}
-                      className="w-full h-40 object-cover rounded-xl mb-3"
-                    />
-                  )}
-
-                  <h3 className="font-bold text-lg">{lesson.title}</h3>
-
-                  <p className="text-sm text-gray-500 mt-2 line-clamp-3">
-                    {lesson.description}
-                  </p>
-
-                  <div className="flex justify-between mt-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <FiBookOpen />
-                      {lesson.category}
-                    </span>
-
-                    <span className="flex items-center gap-1">
-                      <FiHeart />
-                      {lesson.savesCount || 0}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center text-gray-500">
-              No public lessons yet
-            </div>
-          )}
         </div>
       </div>
     </div>
