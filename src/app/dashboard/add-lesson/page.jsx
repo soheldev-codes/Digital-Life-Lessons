@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "@/lib/auth-client";
 import { FiUpload, FiPlus } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 const categories = [
   "Personal Growth",
@@ -19,7 +20,7 @@ const tones = ["Motivational", "Sad", "Realization", "Gratitude"];
 
 export default function AddLessonPage() {
   const { data: session } = useSession();
-
+  const router = useRouter();
   const user = session?.user;
 
   const isPremium = user?.isPremium || user?.role === "admin";
@@ -140,6 +141,10 @@ export default function AddLessonPage() {
 
     mutation.mutate(lessonData);
   };
+
+  if (!user) {
+    return router.push("/auth/login");
+  }
 
   return (
     <div className="max-w-4xl mx-auto py-4 px-4">

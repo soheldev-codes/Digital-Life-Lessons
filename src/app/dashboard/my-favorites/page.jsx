@@ -59,6 +59,10 @@ export default function MyFavoritesPage() {
     },
   });
 
+  if (!user) {
+    return router.push("/auth/login");
+  }
+
   const filtered = favorites.filter((fav) => {
     if (categoryFilter !== "All" && fav.lessonCategory !== categoryFilter) {
       return false;

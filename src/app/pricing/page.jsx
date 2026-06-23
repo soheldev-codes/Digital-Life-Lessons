@@ -9,6 +9,10 @@ export default function PricingPage() {
   const { data: session } = useSession();
   const user = session?.user;
 
+  if (!user) {
+    return router.push("/auth/login");
+  }
+
   return (
     <div className="max-w-6xl mx-auto py-20 px-4">
       <h1 className="text-5xl font-bold text-center mb-12">Unlock Premium</h1>

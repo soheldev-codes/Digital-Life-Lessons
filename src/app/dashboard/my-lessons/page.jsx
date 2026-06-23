@@ -90,6 +90,10 @@ export default function MyLessonsPage() {
     });
   };
 
+  if (!user) {
+    return router.push("/auth/login");
+  }
+
   return (
     <div className="space-y-8">
       {/* top */}

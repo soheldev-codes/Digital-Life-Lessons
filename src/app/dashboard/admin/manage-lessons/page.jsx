@@ -10,6 +10,7 @@ import {
   FiCheckCircle,
   FiEyeOff,
 } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function ManageLessons() {
   const queryClient = useQueryClient();
@@ -28,21 +29,30 @@ export default function ManageLessons() {
     mutationFn: async (id) => {
       await axios.patch(`http://localhost:5000/admin/lessons/feature/${id}`);
     },
-    onSuccess: () => queryClient.invalidateQueries(["admin-lessons"]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin-lessons"]);
+      toast.success("Lesson featured updated successfully");
+    },
   });
 
   const reviewMutation = useMutation({
     mutationFn: async (id) => {
       await axios.patch(`http://localhost:5000/admin/lessons/review/${id}`);
     },
-    onSuccess: () => queryClient.invalidateQueries(["admin-lessons"]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin-lessons"]);
+      toast.success("Lesson review updated successfully");
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       await axios.delete(`http://localhost:5000/admin/lessons/${id}`);
     },
-    onSuccess: () => queryClient.invalidateQueries(["admin-lessons"]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin-lessons"]);
+      toast.success("Lesson deleted successfully");
+    },
   });
 
   const filteredLessons = lessons.filter((lesson) => {
