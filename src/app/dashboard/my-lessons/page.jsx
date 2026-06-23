@@ -144,6 +144,7 @@ export default function MyLessonsPage() {
                 <th className="p-4">Access</th>
                 <th className="p-4">Stats</th>
                 <th className="p-4">Actions</th>
+                <th className="p-4">Review</th>
               </tr>
             </thead>
 
@@ -224,6 +225,17 @@ export default function MyLessonsPage() {
                         <FiTrash />
                       </button>
                     </div>
+                  </td>
+                  <td>
+                    {lesson.isReviewed ? (
+                      <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm flex items-center gap-1">
+                        <FiStar /> Approved
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm">
+                        Pending Approval
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

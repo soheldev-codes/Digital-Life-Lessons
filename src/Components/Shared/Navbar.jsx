@@ -20,6 +20,7 @@ export default function Navbar() {
   const user = session?.user;
   const isLoggedIn = !!user;
   const isAdmin = user?.role === "admin";
+  const isUser = user?.role === "user";
 
   const publicLinks = [
     { label: "Home", href: "/" },
@@ -83,7 +84,8 @@ export default function Navbar() {
                     {link?.label}
                   </Link>
                 ))
-              : userLinks.map((link) => (
+              : isUser &&
+                userLinks.map((link) => (
                   <Link
                     key={link?.href}
                     href={link?.href}

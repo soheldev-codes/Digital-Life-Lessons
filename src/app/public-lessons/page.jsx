@@ -48,6 +48,8 @@ export default function PublicLessonsPage() {
     },
   });
 
+  console.log(lessons);
+
   const filtered = useMemo(() => {
     let result = [...lessons];
 

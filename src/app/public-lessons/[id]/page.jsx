@@ -18,6 +18,7 @@ import {
 import toast from "react-hot-toast";
 import { useSession } from "@/lib/auth-client";
 import Image from "next/image";
+import { FcLike } from "react-icons/fc";
 
 export default function LessonDetails() {
   const { id } = useParams();
@@ -90,55 +91,41 @@ export default function LessonDetails() {
       const res = await axios.patch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/like/${id}`,
         {
-          email: user?.email, // user চেক করে নিন
-        },
-      );
-      return res.data;
-    },
-    onSuccess: () => {
-      // query key সঠিকভাবে পাস করুন
-      queryClient.invalidateQueries({ queryKey: ["lesson", id] });
-    },
-  });
-
-  // favorite mutation
-  // favorite mutation
-  const favoriteMutation = useMutation({
-    mutationFn: async () => {
-      // এখানে POST রিকোয়েস্ট পাঠান
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/favorite/${id}`,
-        {
           email: user?.email,
         },
       );
       return res.data;
     },
     onSuccess: () => {
-      // ডেটা আপডেট হওয়ার পর লেসনটি রিফ্রেচ করুন যাতে savesCount আপডেট হয়
-      queryClient.invalidateQueries(["lesson", id]);
+      queryClient.invalidateQueries({ queryKey: ["lesson", id] });
     },
   });
 
-  // report mutation
-  // const reportMutation = useMutation({
-  //   mutationFn: async () => {
-  //     await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/reports`, {
-  //       lesson_id: id,
-  //       lesson_title: lesson.title,
-  //       reporter_email: user.email,
-  //       reporter_name: user.name,
-  //       reason,
-  //       details,
-  //     });
-  //   },
-  //   onSuccess: () => {
-  //     setReportOpen(false);
-  //     setReason("");
-  //     setDetails("");
-  //     alert("Report submitted");
-  //   },
-  // });
+  // favorite mutation
+  const favoriteMutation = useMutation({
+    mutationFn: async () => {
+      // Check if the lesson is already favorited
+      if (lesson.isFavorite) {
+        // If it is, send a DELETE request to remove it from favorites
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/favorite/${id}`,
+          { data: { email: user?.email } },
+        );
+      } else {
+        // If it isn't, send a POST request to add it to favorites
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/favorite/${id}`,
+          { email: user?.email },
+        );
+      }
+
+      return !lesson.isFavorite; // Return the new favorite status
+    },
+    onSuccess: () => {
+      // Invalidate the lesson query to refetch the updated lesson data
+      queryClient.invalidateQueries(["lesson", id]);
+    },
+  });
 
   const reportMutation = useMutation({
     mutationFn: async () => {
@@ -171,12 +158,15 @@ export default function LessonDetails() {
     return <div>Lesson not found</div>;
   }
 
+  if (!user) {
+    return router.push("/auth/login");
+  }
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
       {/* back */}
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 mb-6"
+        className="flex items-center gap-2 mb-6 cursor-pointer"
       >
         <FaArrowLeft />
         Back
@@ -219,28 +209,28 @@ export default function LessonDetails() {
       </p>
 
       {/* actions */}
-      <div className="border-y py-5 flex gap-3">
+      <div className="border-y border-gray-200 py-5 flex gap-3">
         <button
           onClick={() => likeMutation.mutate()}
           className="border px-4 py-2 rounded-lg flex gap-2 items-center"
         >
-          <FaHeart />
+          <FcLike />
           {lesson.reactionCount}
         </button>
 
         <button
           onClick={() => favoriteMutation.mutate()}
-          className={`border px-4 py-2 rounded-lg flex gap-2 items-center ${
+          className={`border border-gray-200 px-4 py-2 rounded-lg flex gap-2 items-center ${
             lesson.isFavorite ? "bg-red-50 text-red-500" : ""
           }`}
         >
-          {lesson.isFavorite ? <FaHeart /> : <FaBookmark />}
-          {lesson.savesCount || 0}
+          {lesson.saves_count ? <FaHeart /> : <FaBookmark />}
+          {lesson.saves_count.length || 0}
         </button>
 
         <button
           onClick={() => setReportOpen(true)}
-          className="border px-4 py-2 rounded-lg flex gap-2 items-center text-red-500"
+          className="border border-gray-200 px-4 py-2 rounded-lg flex gap-2 items-center text-red-500"
         >
           <FaFlag />
           Report
@@ -274,12 +264,12 @@ export default function LessonDetails() {
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Share your thoughts..."
-            className="border rounded-xl px-4 py-3 w-full"
+            className="border border-gray-200 rounded-xl px-4 py-3 w-full"
           />
 
           <button
             onClick={() => commentMutation.mutate()}
-            className="bg-purple-500 text-white p-4 rounded-xl"
+            className="bg-purple-500 text-white p-4 rounded-xl cursor-pointer "
           >
             <FaPaperPlane />
           </button>
@@ -311,7 +301,10 @@ export default function LessonDetails() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {related.map((item) => (
-            <div key={item._id} className="border rounded-xl p-4">
+            <div
+              key={item._id}
+              className="border border-gray-200 rounded-xl p-4"
+            >
               <Image
                 height={200}
                 width={400}
@@ -334,7 +327,7 @@ export default function LessonDetails() {
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="border p-3 w-full mb-4 rounded-lg"
+              className="border border-gray-200 p-3 w-full mb-4 rounded-lg"
             >
               <option value="">Select reason</option>
               <option>Inappropriate Content</option>
@@ -346,7 +339,7 @@ export default function LessonDetails() {
             </select>
 
             <textarea
-              className="border rounded-lg p-3 w-full mb-4"
+              className="border border-gray-200 rounded-lg p-3 w-full mb-4"
               placeholder="Details"
               value={details}
               onChange={(e) => setDetails(e.target.value)}
