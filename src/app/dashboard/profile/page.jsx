@@ -23,7 +23,7 @@ export default function ProfilePage() {
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons/public/${user.email}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/public/${user.email}`,
       );
       return res.data;
     },
@@ -35,7 +35,7 @@ export default function ProfilePage() {
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/favorites/${user.email}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/favorites/${user.email}`,
       );
       return res.data;
     },
@@ -45,7 +45,7 @@ export default function ProfilePage() {
   const updateMutation = useMutation({
     mutationFn: async (payload) => {
       const res = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/${user.email}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users/${user.email}`,
         payload,
       );
       return res.data;
@@ -69,7 +69,7 @@ export default function ProfilePage() {
       body.append("image", image);
 
       const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_KEY}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/upload-image`,
         body,
       );
 

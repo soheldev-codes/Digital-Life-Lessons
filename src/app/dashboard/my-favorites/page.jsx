@@ -32,7 +32,7 @@ export default function MyFavoritesPage() {
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/favorites?email=${user.email}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/favorites?email=${user.email}`,
       );
       return res.data;
     },
@@ -41,11 +41,11 @@ export default function MyFavoritesPage() {
   const removeMutation = useMutation({
     mutationFn: async (favorite) => {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/favorites/${favorite._id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/favorites/${favorite._id}`,
       );
 
       await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/lessons/${favorite.lessonId}/decrement-save`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/${favorite.lessonId}/decrement-save`,
       );
     },
 

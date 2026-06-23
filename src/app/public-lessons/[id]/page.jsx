@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useSession } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function LessonDetails() {
   const { id } = useParams();
@@ -35,7 +36,9 @@ export default function LessonDetails() {
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", id],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5000/lessons/${id}`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/${id}`,
+      );
       return res.data;
     },
   });
@@ -44,7 +47,9 @@ export default function LessonDetails() {
   const { data: comments = [] } = useQuery({
     queryKey: ["comments", id],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5000/comments/${id}`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/comments/${id}`,
+      );
       return res.data;
     },
   });
@@ -55,7 +60,7 @@ export default function LessonDetails() {
     enabled: !!lesson,
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:5000/lessons/related/${lesson.category}?exclude=${lesson._id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/related/${lesson.category}?exclude=${lesson._id}`,
       );
       return res.data;
     },
@@ -64,7 +69,8 @@ export default function LessonDetails() {
   // comment mutation
   const commentMutation = useMutation({
     mutationFn: async () => {
-      await axios.post("http://localhost:5000/comments", {
+      console.log("add comment", commentText);
+      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/comments`, {
         lesson_id: id,
         text: commentText,
         user_name: user.name,
@@ -82,7 +88,7 @@ export default function LessonDetails() {
   const likeMutation = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
-        `http://localhost:5000/lessons/like/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/like/${id}`,
         {
           email: user?.email, // user চেক করে নিন
         },
@@ -101,7 +107,7 @@ export default function LessonDetails() {
     mutationFn: async () => {
       // এখানে POST রিকোয়েস্ট পাঠান
       const res = await axios.post(
-        `http://localhost:5000/lessons/favorite/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons/favorite/${id}`,
         {
           email: user?.email,
         },
@@ -109,7 +115,7 @@ export default function LessonDetails() {
       return res.data;
     },
     onSuccess: () => {
-      // ডেটা আপডেট হওয়ার পর লেসনটি রিফ্রেচ করুন যাতে savesCount আপডেট হয়
+      // ডেটা আপডেট হওয়ার পর লেসনটি রিফ্রেচ করুন যাতে savesCount আপডেট হয়
       queryClient.invalidateQueries(["lesson", id]);
     },
   });
@@ -117,7 +123,7 @@ export default function LessonDetails() {
   // report mutation
   // const reportMutation = useMutation({
   //   mutationFn: async () => {
-  //     await axios.post("http://localhost:5000/reports", {
+  //     await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/reports`, {
   //       lesson_id: id,
   //       lesson_title: lesson.title,
   //       reporter_email: user.email,
@@ -136,7 +142,7 @@ export default function LessonDetails() {
 
   const reportMutation = useMutation({
     mutationFn: async () => {
-      return await axios.post("http://localhost:5000/reports", {
+      return await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/reports`, {
         lesson_id: id,
         lesson_title: lesson.title,
         reporter_email: user.email,
@@ -199,7 +205,13 @@ export default function LessonDetails() {
       </div>
 
       {/* image */}
-      <img src={lesson.image} className="rounded-2xl w-full mb-8" alt="" />
+      <Image
+        height={400}
+        width={800}
+        src={lesson.image}
+        className="rounded-2xl w-full mb-8"
+        alt=""
+      />
 
       {/* description */}
       <p className="leading-8 text-lg whitespace-pre-wrap mb-8">
@@ -237,7 +249,9 @@ export default function LessonDetails() {
 
       {/* author */}
       <div className="bg-gray-100 rounded-2xl p-5 mt-8 flex gap-4 items-center">
-        <img
+        <Image
+          height={150}
+          width={150}
           src={lesson.creatorPhoto}
           className="w-14 h-14 rounded-full"
           alt=""
@@ -275,7 +289,9 @@ export default function LessonDetails() {
           {comments.map((comment) => (
             <div key={comment._id} className="bg-gray-100 p-4 rounded-xl">
               <div className="flex gap-3 items-center mb-2">
-                <img
+                <Image
+                  height={32}
+                  width={32}
                   src={comment.user_photo}
                   className="w-8 h-8 rounded-full"
                   alt=""
@@ -296,7 +312,13 @@ export default function LessonDetails() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {related.map((item) => (
             <div key={item._id} className="border rounded-xl p-4">
-              <img src={item.image} className="rounded-lg mb-3" />
+              <Image
+                height={200}
+                width={400}
+                src={item.image}
+                className="rounded-lg mb-3"
+                alt=""
+              />
               <h3 className="font-bold">{item.title}</h3>
             </div>
           ))}

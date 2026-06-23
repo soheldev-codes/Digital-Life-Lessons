@@ -20,14 +20,18 @@ export default function ManageLessons() {
   const { data: lessons = [], isLoading } = useQuery({
     queryKey: ["admin-lessons"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:5000/admin/lessons");
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/lessons`,
+      );
       return res.data;
     },
   });
 
   const featureMutation = useMutation({
     mutationFn: async (id) => {
-      await axios.patch(`http://localhost:5000/admin/lessons/feature/${id}`);
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/lessons/feature/${id}`,
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["admin-lessons"]);
@@ -37,7 +41,9 @@ export default function ManageLessons() {
 
   const reviewMutation = useMutation({
     mutationFn: async (id) => {
-      await axios.patch(`http://localhost:5000/admin/lessons/review/${id}`);
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/lessons/review/${id}`,
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["admin-lessons"]);
@@ -47,7 +53,9 @@ export default function ManageLessons() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
-      await axios.delete(`http://localhost:5000/admin/lessons/${id}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/lessons/${id}`,
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["admin-lessons"]);

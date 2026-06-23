@@ -15,6 +15,7 @@ import {
   FaUserShield,
   FaPlusCircle,
 } from "react-icons/fa";
+import Image from "next/image";
 
 export default function Sidebar({ open, setOpen }) {
   const pathname = usePathname();
@@ -121,7 +122,9 @@ export default function Sidebar({ open, setOpen }) {
         {/* User */}
         <div className="p-5 border-b dark:border-gray-800">
           <div className="flex items-center gap-3">
-            <img
+            <Image
+              height={150}
+              width={150}
               src={user?.image || "https://i.pravatar.cc/150"}
               alt=""
               className="w-14 h-14 rounded-full object-cover ring-2 ring-purple-500"

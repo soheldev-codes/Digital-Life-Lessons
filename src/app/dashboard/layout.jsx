@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Sidebar from "@/components/Dashboard/Sidebar";
 import { authClient } from "@/lib/auth-client";
 import { FaBars } from "react-icons/fa";
+import Sidebar from "@/Components/Dashboard/Sidebar";
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
