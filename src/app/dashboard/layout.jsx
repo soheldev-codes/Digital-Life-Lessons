@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }) {
       const isAdmin = user.role === "admin";
       const isAdminRoute = pathname.startsWith("/dashboard/admin");
 
-      // user admin route access পাবে না
+      // user admin route access
       if (!isAdmin && isAdminRoute) {
         router.push("/dashboard");
       }

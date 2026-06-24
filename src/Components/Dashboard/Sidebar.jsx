@@ -113,14 +113,14 @@ export default function Sidebar({ open, setOpen }) {
         `}
       >
         {/* Header */}
-        <div className="h-20 flex items-center px-6 border-b dark:border-gray-800">
+        <div className="h-20 flex items-center px-6 border-b border-gray-200 dark:border-gray-800">
           <Link href="/">
             <h1 className="text-2xl font-bold text-purple-600">Life Lessons</h1>
           </Link>
         </div>
 
         {/* User */}
-        <div className="p-5 border-b dark:border-gray-800">
+        <div className="p-5 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center gap-3">
             <Image
               height={150}
@@ -174,10 +174,10 @@ export default function Sidebar({ open, setOpen }) {
         </div>
 
         {/* Logout */}
-        <div className="absolute bottom-0 w-full p-4 border-t dark:border-gray-800">
+        <div className="absolute bottom-0 w-full p-4 border-t border-gray-200 dark:border-gray-800">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium"
+            className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-medium cursor-pointer transition"
           >
             <FaSignOutAlt />
             Logout

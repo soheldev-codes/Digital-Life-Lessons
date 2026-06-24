@@ -14,7 +14,7 @@ const slides = [
     image:
       "https://images.unsplash.com/photo-1617805784118-3c6a4b920c8d?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     cta: "Start Writing",
-    ctaLink: "/register",
+    ctaLink: "/auth/signup",
     icon: FaBookOpen,
   },
   {
