@@ -68,10 +68,8 @@ export default function SignUp() {
         return;
       }
 
-      console.log(data);
       router.push("/");
     } catch (err) {
-      console.error(err);
       setErrorMsg("Something went wrong");
     }
 
@@ -88,7 +86,6 @@ export default function SignUp() {
         callbackURL: "/",
       });
     } catch (error) {
-      console.log(error);
       setErrorMsg("Google login failed");
       setGoogleLoading(false);
     }

@@ -38,7 +38,6 @@ const Login = () => {
       router.push("/");
     } catch (err) {
       toast.error("Something went wrong");
-      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -54,7 +53,6 @@ const Login = () => {
       });
     } catch (error) {
       toast.error("Google login failed");
-      console.log(error);
       setGoogleLoading(false);
     }
   };
@@ -127,7 +125,7 @@ const Login = () => {
         </form>
 
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-          Don't have an account?{" "}
+          Dont have an account?{" "}
           <Link href="/auth/signup" className="text-purple-500 hover:underline">
             Register
           </Link>

@@ -52,8 +52,6 @@ export default function CheckoutForm() {
       return;
     }
 
-    console.log(result.paymentIntent.status);
-
     if (result.paymentIntent.status === "succeeded") {
       const premiumRes = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/users/premium/${user.email}`,
@@ -63,8 +61,6 @@ export default function CheckoutForm() {
       );
 
       const premiumData = await premiumRes.json();
-
-      console.log(premiumData);
 
       if (premiumData.modifiedCount > 0) {
         router.push("/payment-success");

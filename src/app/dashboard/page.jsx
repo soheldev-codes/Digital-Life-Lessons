@@ -28,8 +28,6 @@ export default function DashboardPage() {
     },
   });
 
-  console.log(dashboardData);
-
   const stats = [
     {
       title: "Total Lessons",

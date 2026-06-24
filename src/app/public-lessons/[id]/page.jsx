@@ -70,7 +70,6 @@ export default function LessonDetails() {
   // comment mutation
   const commentMutation = useMutation({
     mutationFn: async () => {
-      console.log("add comment", commentText);
       await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/comments`, {
         lesson_id: id,
         text: commentText,
@@ -145,7 +144,6 @@ export default function LessonDetails() {
       toast.success("Report submitted successfully!");
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Something went wrong, please try again.");
     },
   });

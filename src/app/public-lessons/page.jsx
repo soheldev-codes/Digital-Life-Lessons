@@ -41,14 +41,12 @@ export default function PublicLessonsPage() {
     queryKey: ["public-lessons"],
     queryFn: async () => {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/lessons`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/all-lessons`,
       );
 
       return res.data.filter((lesson) => lesson.visibility === "Public");
     },
   });
-
-  console.log(lessons);
 
   const filtered = useMemo(() => {
     let result = [...lessons];

@@ -12,8 +12,6 @@ export function MostSavedLessons() {
     },
   });
 
-  console.log(lessons);
-
   return (
     <div>
       <div className="flex items-center gap-2 text-purple-600 mb-3 font-medium">
